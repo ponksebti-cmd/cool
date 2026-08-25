@@ -159,7 +159,8 @@ def _data_producer(tokenizer, batch_size: int, block_size: int,
 
     buf: list[int] = []
     need = batch_size * block_size
-    for row in dataset:
+    try:
+      for row in dataset:
         if stop_evt.is_set():
             break
         try:
@@ -183,6 +184,11 @@ def _data_producer(tokenizer, batch_size: int, block_size: int,
                     break
                 except queue.Full:
                     pass
+    except Exception as exc:
+        # Surface data thread crashes — otherwise they die silently
+        import traceback
+        print(f"[DATA THREAD ERROR] rank={rank}: {exc}", flush=True)
+        traceback.print_exc()
 
 def make_data_loader(tokenizer, batch_size: int, block_size: int,
                      rank: int = 0, world_size: int = 1):
@@ -355,7 +361,16 @@ def train_worker(rank: int, world_size: int, save_dir: Path, amp_dtype: torch.dt
         log("[DATA] Connecting to FineWeb-Edu 10B ...")
 
     # ── Data ─────────────────────────────────────────────────────────────────
-    tokenizer  = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
+    # TinyLlama: 100% public (no HF token needed), 32K vocab = perfect match for our model
+    try:
+        tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+        if is_master:
+            log("[DATA] ✓ Tokenizer loaded: TinyLlama 32K vocab")
+    except Exception as e:
+        if is_master:
+            log(f"[DATA] TinyLlama tokenizer failed ({e}), falling back to gpt2")
+        tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    tokenizer.pad_token = tokenizer.eos_token
     batch_iter, stop_evt = make_data_loader(
         tokenizer, batch_size_per_gpu, config.block_size,
         rank=rank, world_size=world_size,
