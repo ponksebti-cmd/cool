@@ -99,7 +99,10 @@ class TransformerBlock(nn.Module):
             self.attn: nn.Module = GatedDeltaNet(config, layer_idx)
 
         # Swappable slots (Stage 3 replaces mlp)
-        self.mlp: nn.Module = MoELayer(config, layer_idx)
+        if getattr(config, "n_routed_experts", 0) > 0:
+            self.mlp: nn.Module = MoELayer(config, layer_idx)
+        else:
+            self.mlp: nn.Module = SwiGLUMLP(config, layer_idx)
 
     def forward(
         self,

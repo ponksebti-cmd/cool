@@ -55,9 +55,9 @@ class ModelConfig:
     attn_layer_period: int = 4
 
     # ── Sparse MoE ────────────────────────────────────────────────────────
-    n_routed_experts: int = 8
+    n_routed_experts: int = 0             # Set >0 to enable MoE
     n_active_experts: int = 2
-    use_shared_expert: bool = True
+    use_shared_expert: bool = False
     moe_capacity_factor: float = 1.25     # > 0 enforces a max token limit per expert
     moe_aux_loss_coef: float = 0.01       # typical coefficient for load balancing
     moe_z_loss_coef: float = 1e-3         # Z-loss: penalises large router logits (PaLM/ST-MoE)
