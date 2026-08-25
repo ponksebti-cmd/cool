@@ -106,16 +106,16 @@ def detect_gpu_config() -> dict:
     if is_pascal:
         dtype = torch.float32
         use_scaler = False
-        batch_size = 4
+        batch_size = 1
     elif is_t4:
         dtype = torch.float16
         use_scaler = True
-        batch_size = 4
+        batch_size = 1
     else:
         # Fallback for newer GPUs (A100 etc if Kaggle adds them)
         dtype = torch.bfloat16
         use_scaler = False
-        batch_size = 8
+        batch_size = 4
         
     # Scale batch size if multiple GPUs are available (DataParallel)
     effective_batch = batch_size * num_gpus if num_gpus > 0 else batch_size
