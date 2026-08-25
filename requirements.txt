@@ -1,0 +1,5 @@
+# Stage 1 dependencies — Dense Transformer baseline
+# Install with: pip install -r requirements.txt
+
+torch>=2.2.0           # scaled_dot_product_attention, bf16 stability
+pytest>=7.4.0          # test runner

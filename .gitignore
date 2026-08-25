@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Checkpoints & model weights (can be very large)
+*.pt
+*.safetensors
+*.bin
+ckpt_*/
+sft_ckpt_*/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code / editors
+.vscode/
+.idea/
+*.swp
+
+# Environment
+.env
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# HuggingFace cache (downloaded datasets/models, can be gigabytes)
+~/.cache/huggingface/
+
+# Logs
+*.log
