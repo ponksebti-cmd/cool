@@ -154,21 +154,25 @@ DEFAULT_300M = ModelConfig(
     attn_layer_period=4,
 )
 
-# ── 700 Million Parameter Config ────────────────────────────────────────────────
+# ── 700 Million Parameter Config (True MoE) ───────────────────────────────────
 # Requires ~10-12GB VRAM (Perfect for a single Kaggle T4 or P100)
-# hidden=1536, layers=24, heads=12, kv_heads=4
+# Total Parameters: ~738M | Active Parameters per token: ~287M
+# hidden=768, layers=16, heads=12, kv_heads=4, 8 experts
 FLAGSHIP_700M = ModelConfig(
     vocab_size=32_768,
-    hidden_dim=1536,
-    n_layers=24,
+    hidden_dim=768,
+    n_layers=16,
     n_heads=12,
     n_kv_heads=4,
+    n_routed_experts=8,
+    n_active_experts=2,
+    use_shared_expert=True,
     max_seq_len=4096,
     rope_theta=10_000.0,
     rope_scaling_factor=1.0,
     rope_scaling_type="yarn",
     dropout=0.0,
-    init_std=0.018,
+    init_std=0.02,
     scale_residual_init=True,
     attn_layer_period=4,
 )
