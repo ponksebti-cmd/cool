@@ -47,7 +47,7 @@ except ImportError:
     sys.exit(1)
 
 sys.path.insert(0, ".")
-from src import Transformer, DEFAULT_300M, MAC_NANO, TINY_TEST
+from src import Transformer, DEFAULT_300M, FLAGSHIP_700M, FLAGSHIP_1B, FLAGSHIP_3B, MAC_NANO, TINY_TEST
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIG — adjust these to your needs
@@ -58,7 +58,7 @@ WARMUP_STEPS   = 1_000
 GRAD_CLIP      = 1.0
 LOG_EVERY      = 10
 SAVE_EVERY     = 1000       # save every 1000 steps
-MODEL_CONFIG   = "300m"     # "300m" | "nano" | "tiny"
+MODEL_CONFIG   = "700m"     # "3b" | "1b" | "700m" | "300m" | "nano" | "tiny"
 KAGGLE_SAVE_DIR = "/kaggle/working/checkpoints"
 LOCAL_SAVE_DIR  = "./checkpoints"
 
@@ -182,7 +182,8 @@ def stream_packed_batches(tokenizer, batch_size: int, block_size: int, num_gpus:
     # If using DataParallel, we must provide larger batches so they can be split across GPUs
     actual_batch = batch_size * max(1, num_gpus)
     
-    dataset = load_dataset("JeanKaddour/minipile", split="train", streaming=True)
+    # Using FineWeb-Edu (Sample-10BT) for extremely high quality educational text.
+    dataset = load_dataset("HuggingFaceFW/fineweb-edu", name="sample-10BT", split="train", streaming=True)
     buffer = []
     for row in dataset:
         tokens = tokenizer.encode(row["text"], add_special_tokens=True)
@@ -273,6 +274,12 @@ def main():
         config = TINY_TEST
     elif MODEL_CONFIG == "nano":
         config = MAC_NANO
+    elif MODEL_CONFIG == "700m":
+        config = FLAGSHIP_700M
+    elif MODEL_CONFIG == "1b":
+        config = FLAGSHIP_1B
+    elif MODEL_CONFIG == "3b":
+        config = FLAGSHIP_3B
     else:
         config = DEFAULT_300M
         
@@ -328,7 +335,7 @@ def main():
     print(f"  Checkpoints : {save_dir}")
     print(f"{'='*62}\n")
 
-    print("[DATA] Connecting to dataset (MiniPile)...")
+    print("[DATA] Connecting to dataset (FineWeb-Edu 10B)...")
     tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
     batch_iter = stream_packed_batches(tokenizer, base_batch_size, config.block_size, num_gpus)
 

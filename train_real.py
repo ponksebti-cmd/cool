@@ -38,14 +38,14 @@ except ImportError:
     sys.exit(1)
 
 sys.path.insert(0, ".")
-from src import Transformer, DEFAULT_300M, MAC_NANO, TINY_TEST
+from src import Transformer, DEFAULT_300M, FLAGSHIP_700M, FLAGSHIP_1B, FLAGSHIP_3B, MAC_NANO, TINY_TEST
 
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--config",       default="300m", choices=["tiny", "nano", "300m"])
+    p.add_argument("--config",       default="300m", choices=["tiny", "nano", "300m", "700m", "1b", "3b"])
     p.add_argument("--device",       default="auto", help="auto | cuda | mps | cpu")
     p.add_argument("--steps",        type=int,   default=100_000, help="Total training steps")
     p.add_argument("--batch-size",   type=int,   default=4,  help="Micro-batch size (T4 16GB can handle 4-8)")
@@ -217,6 +217,12 @@ def main():
         config = TINY_TEST
     elif args.config == "nano":
         config = MAC_NANO
+    elif args.config == "700m":
+        config = FLAGSHIP_700M
+    elif args.config == "1b":
+        config = FLAGSHIP_1B
+    elif args.config == "3b":
+        config = FLAGSHIP_3B
     else:
         config = DEFAULT_300M
     if not args.no_ckpt:

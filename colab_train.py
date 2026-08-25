@@ -46,7 +46,7 @@ except ImportError:
     sys.exit(1)
 
 sys.path.insert(0, ".")
-from src import Transformer, DEFAULT_300M, MAC_NANO, TINY_TEST
+from src import Transformer, DEFAULT_300M, FLAGSHIP_700M, FLAGSHIP_1B, FLAGSHIP_3B, MAC_NANO, TINY_TEST
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIG — adjust these to your needs
@@ -57,7 +57,7 @@ WARMUP_STEPS   = 1_000
 GRAD_CLIP      = 1.0
 LOG_EVERY      = 10
 SAVE_EVERY     = 500        # save to Drive every 500 steps (~10 min on T4)
-MODEL_CONFIG   = "300m"     # "300m" | "nano" | "tiny"
+MODEL_CONFIG   = "700m"     # "3b" | "1b" | "700m" | "300m" | "nano" | "tiny"
 DRIVE_SAVE_DIR = "/content/drive/MyDrive/ai_checkpoints"
 LOCAL_SAVE_DIR = "/content/ai_checkpoints"   # fallback if Drive not mounted
 
@@ -291,6 +291,12 @@ def main():
         config = TINY_TEST
     elif MODEL_CONFIG == "nano":
         config = MAC_NANO
+    elif MODEL_CONFIG == "700m":
+        config = FLAGSHIP_700M
+    elif MODEL_CONFIG == "1b":
+        config = FLAGSHIP_1B
+    elif MODEL_CONFIG == "3b":
+        config = FLAGSHIP_3B
     else:
         config = DEFAULT_300M
     config.use_gradient_checkpointing = True

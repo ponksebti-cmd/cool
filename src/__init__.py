@@ -1,7 +1,7 @@
 """
 src/__init__.py — Package init for the transformer source.
 """
-from .config import ModelConfig, DEFAULT_300M, MAC_NANO, TINY_TEST
+from .config import ModelConfig, DEFAULT_300M, FLAGSHIP_700M, FLAGSHIP_1B, FLAGSHIP_3B, MAC_NANO, TINY_TEST
 from .model import Transformer, RMSNorm, TransformerBlock
 from .linear import GatedDeltaNet
 from .moe import MoELayer
@@ -16,6 +16,9 @@ from .data import (
 __all__ = [
     "ModelConfig",
     "DEFAULT_300M",
+    "FLAGSHIP_700M",
+    "FLAGSHIP_1B",
+    "FLAGSHIP_3B",
     "MAC_NANO",
     "TINY_TEST",
     "Transformer",

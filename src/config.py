@@ -154,6 +154,63 @@ DEFAULT_300M = ModelConfig(
     attn_layer_period=4,
 )
 
+# ── 700 Million Parameter Config ────────────────────────────────────────────────
+# Requires ~10-12GB VRAM (Perfect for a single Kaggle T4 or P100)
+# hidden=1536, layers=24, heads=12, kv_heads=4
+FLAGSHIP_700M = ModelConfig(
+    vocab_size=32_768,
+    hidden_dim=1536,
+    n_layers=24,
+    n_heads=12,
+    n_kv_heads=4,
+    max_seq_len=4096,
+    rope_theta=10_000.0,
+    rope_scaling_factor=1.0,
+    rope_scaling_type="yarn",
+    dropout=0.0,
+    init_std=0.018,
+    scale_residual_init=True,
+    attn_layer_period=4,
+)
+
+# ── 1 Billion Parameter Config ────────────────────────────────────────────────
+# Requires ~16GB VRAM (e.g. Google Colab T4, Kaggle P100)
+# hidden=2048, layers=24, heads=16, kv_heads=8
+FLAGSHIP_1B = ModelConfig(
+    vocab_size=32_768,
+    hidden_dim=2048,
+    n_layers=24,
+    n_heads=16,
+    n_kv_heads=8,
+    max_seq_len=4096,
+    rope_theta=10_000.0,
+    rope_scaling_factor=1.0,
+    rope_scaling_type="yarn",
+    dropout=0.0,
+    init_std=0.015,
+    scale_residual_init=True,
+    attn_layer_period=4,
+)
+
+# ── 3 Billion Parameter Config ────────────────────────────────────────────────
+# Requires ~32GB-40GB VRAM (e.g. Kaggle T4x2, Colab A100/L4)
+# hidden=3072, layers=32, heads=24, kv_heads=8
+FLAGSHIP_3B = ModelConfig(
+    vocab_size=32_768,
+    hidden_dim=3072,
+    n_layers=32,
+    n_heads=24,
+    n_kv_heads=8,
+    max_seq_len=4096,
+    rope_theta=10_000.0,
+    rope_scaling_factor=1.0,
+    rope_scaling_type="yarn",
+    dropout=0.0,
+    init_std=0.01,
+    scale_residual_init=True,
+    attn_layer_period=4,
+)
+
 # ── Mac-optimized "Nano" config (~20M params) ─────────────────────────────────
 # Designed for training on Apple Silicon (M1/M2/M3) at real-time speeds.
 # 512 context, 8 layers, 512 hidden dim — big enough to learn language,
