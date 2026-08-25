@@ -287,6 +287,13 @@ def train_worker(rank: int, world_size: int, save_dir: Path, amp_dtype: torch.dt
     if is_master:
         log("\n[MODEL] Building model ...")
     model = Transformer(config).to(dev)
+    
+    # ── Compile for Speed ────────────────────────────────────────────────────
+    # Fuses GPU kernels — usually gives 20-40% speedup
+    if is_master:
+        log("[MODEL] Compiling model with torch.compile() ...")
+    model = torch.compile(model)
+
     param_count = sum(p.numel() for p in model.parameters())
     if is_master:
         log(f"[MODEL] {param_count/1e6:.1f}M parameters")

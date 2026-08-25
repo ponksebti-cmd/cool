@@ -176,7 +176,7 @@ FLAGSHIP_700M = ModelConfig(
     dropout=0.0,
     init_std=0.02,
     scale_residual_init=True,
-    attn_layer_period=4,
+    attn_layer_period=1,   # 1 = Use pure FlashAttention-2 (GroupedQueryAttention) on all layers
 )
 
 # ── 1 Billion Parameter Config ────────────────────────────────────────────────
