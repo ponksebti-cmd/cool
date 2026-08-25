@@ -34,6 +34,9 @@ from contextlib import nullcontext
 from pathlib import Path
 from typing import Iterator
 
+# Prevent CUDA memory fragmentation on Kaggle GPUs
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
