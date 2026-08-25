@@ -332,8 +332,8 @@ def train_worker(rank: int, world_size: int, save_dir: Path, amp_dtype: torch.dt
 
     amp_ctx = torch.autocast(device_type="cuda", dtype=amp_dtype, enabled=True)
 
-    batch_size_per_gpu = 2
-    grad_accum = max(1, 32 // (batch_size_per_gpu * world_size))
+    batch_size_per_gpu = 1          # 1 seq per GPU — halves activation memory
+    grad_accum = max(1, 32 // (batch_size_per_gpu * world_size))  # = 16 steps
 
     moe_aux_c = getattr(config, "moe_aux_loss_coef", 0.0)
     moe_z_c   = getattr(config, "moe_z_loss_coef",   0.0)
