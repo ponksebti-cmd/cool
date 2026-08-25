@@ -225,10 +225,19 @@ def print_progress(step, total, loss, t0, tokens_seen, lr, gpu_cfg):
     h, rem = divmod(int(eta_s), 3600)
     m, s = divmod(rem, 60)
     eta_str = f"{h}h {m:02d}m" if h > 0 else f"{m}m {s:02d}s"
-    bar = "█" * int(25 * percent) + "░" * (25 - int(25 * percent))
+    bar = "█" * int(20 * percent) + "░" * (20 - int(20 * percent))
+    
+    # Format tokens seen (M or B)
+    if tokens_seen >= 1e9:
+        tok_str = f"{tokens_seen/1e9:.2f}B"
+    else:
+        tok_str = f"{tokens_seen/1e6:.1f}M"
+        
+    vram = f" | VRAM: {torch.cuda.memory_allocated()/1e9:.1f}G" if torch.cuda.is_available() else ""
+    
     sys.stdout.write(
-        f"\r  [{bar}] {percent*100:3.0f}% | Loss: {loss:.4f} | "
-        f"Tok/s: {tok_per_sec:,.0f} | LR: {lr:.2e} | ETA: {eta_str}   "
+        f"\r  [{bar}] {percent*100:3.0f}% | Step: {step} | Toks: {tok_str} | "
+        f"Loss: {loss:.4f} | Tok/s: {tok_per_sec:,.0f} | LR: {lr:.2e} | ETA: {eta_str}{vram}   "
     )
     sys.stdout.flush()
 
