@@ -13,7 +13,7 @@ import torch
 from transformers import AutoTokenizer
 
 sys.path.insert(0, ".")
-from src import Transformer, DEFAULT_300M, TINY_TEST
+from src import Transformer, DEFAULT_300M, FLAGSHIP_700M, TINY_TEST
 
 
 def generate_response(
@@ -54,7 +54,7 @@ def generate_response(
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--config", default="300m", choices=["tiny", "300m"])
+    p.add_argument("--config", default="700m", choices=["tiny", "300m", "700m"])
     p.add_argument("--ckpt", type=str, required=True, help="Path to SFT checkpoint")
     p.add_argument("--device", default="auto")
     args = p.parse_args()
@@ -67,9 +67,14 @@ def main():
     dev = torch.device(device)
 
     print("\n[Chat] Loading Tokenizer...")
-    tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
-
-    config = TINY_TEST if args.config == "tiny" else DEFAULT_300M
+    try:
+        tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+    except Exception:
+        print("[Chat] Falling back to gpt2 tokenizer...")
+        tokenizer = AutoTokenizer.from_pretrained("gpt2")
+        
+    cfg_map = {"tiny": TINY_TEST, "300m": DEFAULT_300M, "700m": FLAGSHIP_700M}
+    config = cfg_map[args.config]
     print(f"[Chat] Loading Model architecture on {dev}...")
     model = Transformer(config).to(dev)
     
