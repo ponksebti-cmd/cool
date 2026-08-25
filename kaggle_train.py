@@ -56,7 +56,6 @@ STEPS          = 100_000
 LR             = 4e-4
 WARMUP_STEPS   = 1_000
 GRAD_CLIP      = 1.0
-LOG_EVERY      = 10
 SAVE_EVERY     = 1000       # save every 1000 steps
 MODEL_CONFIG   = "700m"     # "3b" | "1b" | "700m" | "300m" | "nano" | "tiny"
 KAGGLE_SAVE_DIR = "/kaggle/working/checkpoints"
@@ -347,6 +346,7 @@ def main():
     model.train()
     tokens_seen = 0
     t0 = time.perf_counter()
+    last_log_time = t0
 
     try:
         for step in range(start_step, STEPS + 1):
@@ -405,9 +405,11 @@ def main():
                 print("[INFO] Saved. Resume by re-running this script.")
                 sys.exit(0)
 
-            if step == 1 or step % LOG_EVERY == 0:
+            now = time.perf_counter()
+            if step == 1 or (now - last_log_time) >= 30.0:
                 current_lr = optimizer.param_groups[0]["lr"]
                 print_progress(step, STEPS, step_loss, t0, tokens_seen, current_lr, gpu_cfg)
+                last_log_time = now
 
             if step % SAVE_EVERY == 0:
                 save_checkpoint(save_dir / f"ckpt_step_{step}.pt", model, optimizer, scaler, step)
