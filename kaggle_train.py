@@ -456,7 +456,7 @@ def train_worker(rank: int, world_size: int, save_dir: Path, amp_dtype: torch.dt
                 last_log = now
 
             # ── Periodic checkpoint ───────────────────────────────────────────
-            if is_master and step % SAVE_EVERY == 0:
+            if is_master and step % 100 == 0:
                 save_checkpoint(save_dir / f"ckpt_step_{step}.pt",
                                 model, optimizer, scaler, step)
 
@@ -504,12 +504,15 @@ def main():
         log(f"[DDP] Launching {world_size}-GPU DDP training ...")
         os.environ.setdefault("MASTER_ADDR", "localhost")
         os.environ.setdefault("MASTER_PORT", "12355")
-        mp.spawn(
-            train_worker,
-            args=(world_size, save_dir, amp_dtype),
-            nprocs=world_size,
-            join=True,
-        )
+        try:
+            mp.spawn(
+                train_worker,
+                args=(world_size, save_dir, amp_dtype),
+                nprocs=world_size,
+                join=True,
+            )
+        except KeyboardInterrupt:
+            log("\n[STOP] Master process interrupted by Kaggle. Exiting...")
     else:
         log(f"[SINGLE-GPU] {gpu_name}")
         train_worker(0, 1, save_dir, amp_dtype)
